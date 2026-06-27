@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+  <title>MRT2 WebUI</title>
+  <style>
+    :root {
+      --bg-0: #0b0f1f;
+      --bg-1: #131a33;
+      --panel: rgba(255, 255, 255, 0.05);
+      --panel-strong: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.12);
+      --border-strong: rgba(255, 255, 255, 0.22);
+      --text: #e8ecf6;
+      --text-dim: #9aa3bd;
+      --accent: #7c5cff;
+      --accent-2: #29d3c2;
+      --play: #22c55e;
+      --play-2: #15a34a;
+      --stop: #f43f5e;
+      --stop-2: #be123c;
+      --radius: 14px;
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: dark; }
+    body {
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      max-width: 960px; margin: 0 auto; padding: 32px 20px 64px;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(1100px 600px at 12% -8%, rgba(124, 92, 255, 0.28), transparent 60%),
+        radial-gradient(900px 520px at 110% 0%, rgba(41, 211, 194, 0.20), transparent 55%),
+        radial-gradient(800px 800px at 50% 120%, rgba(244, 63, 94, 0.12), transparent 60%),
+        linear-gradient(160deg, var(--bg-0), var(--bg-1));
+      background-attachment: fixed;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; margin: 4px 0 22px; }
+    .brand-mark {
+      width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0; position: relative;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 8px 24px rgba(124, 92, 255, 0.45), inset 0 0 18px rgba(255, 255, 255, 0.25);
+      display: grid; place-items: center;
+      animation: floaty 4s ease-in-out infinite;
+    }
+    .brand-mark::after {
+      content: ""; position: absolute; inset: -2px; border-radius: 15px; z-index: -1;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      filter: blur(14px); opacity: 0.55;
+    }
+    .brand-mark span { font-size: 1.5rem; line-height: 1; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35)); }
+    @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    h1 {
+      font-size: 2rem; margin: 0; font-weight: 900; letter-spacing: -0.03em; line-height: 1.05;
+      background: linear-gradient(100deg, #ffffff 0%, #c9b8ff 35%, var(--accent-2) 70%, #ffffff 100%);
+      background-size: 220% auto;
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      animation: shimmer 6s linear infinite;
+    }
+    @keyframes shimmer { to { background-position: 220% center; } }
+    .brand .tag {
+      display: block; margin-top: 4px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--text-dim);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .brand-mark, h1 { animation: none; }
+    }
+    .sub { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 20px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+    label { display: block; font-size: 0.82rem; font-weight: 600; margin: 12px 0 6px; color: var(--text-dim); letter-spacing: 0.01em; }
+    input[type=text], textarea, select, input[type=number] {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+      font-size: 1rem; background: rgba(0, 0, 0, 0.25); color: var(--text);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input[type=text]:focus, textarea:focus, select:focus, input[type=number]:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.25);
+    }
+    textarea { min-height: 72px; resize: vertical; }
+    input[type=range] {
+      width: 100%; -webkit-appearance: none; appearance: none; height: 6px; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14); outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%;
+      background: var(--accent); cursor: pointer; box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.25);
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 16px; height: 16px; border: none; border-radius: 50%;
+      background: var(--accent); cursor: pointer; box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.25);
+    }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    button {
+      padding: 11px 18px; border: 1px solid transparent; border-radius: 10px; cursor: pointer;
+      font-size: 0.95rem; font-weight: 600; color: #fff;
+      transition: transform 0.08s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    }
+    button:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+    button.primary { background: linear-gradient(135deg, var(--accent), #5a3df0); box-shadow: 0 6px 18px rgba(124, 92, 255, 0.35); }
+    button.secondary {
+      background: var(--panel-strong); color: var(--text); border-color: var(--border-strong);
+    }
+    #playBtn {
+      background: linear-gradient(135deg, var(--play), var(--play-2));
+      box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35); flex: 1; min-width: 120px;
+    }
+    #stopBtn {
+      background: linear-gradient(135deg, var(--stop), var(--stop-2));
+      box-shadow: 0 6px 18px rgba(244, 63, 94, 0.35); flex: 1; min-width: 120px;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; filter: none; transform: none; box-shadow: none; }
+    #status {
+      width: 100%; min-height: 140px; padding: 14px; border: 1px solid var(--border); border-radius: var(--radius);
+      font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.82rem; white-space: pre-wrap;
+      background: rgba(0, 0, 0, 0.35); color: #cdd5ec; line-height: 1.5; box-shadow: var(--shadow);
+    }
+    .val { float: right; color: var(--accent-2); font-weight: 700; }
+    .slow { color: #ff6b81; font-weight: 700; }
+    #modelStatus { font-size: 0.8rem; color: var(--text-dim); margin-top: 6px; }
+    .radio-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+    .radio-row label.radio { display: inline-flex; align-items: center; gap: 6px;
+      font-weight: 500; font-size: 0.9rem; margin: 4px 0; cursor: pointer; color: var(--text); }
+    .radio-row input[type=radio] { width: auto; margin: 0; accent-color: var(--accent); }
+    .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+    @media (max-width: 720px) { .modes { grid-template-columns: 1fr; } }
+    .mode-panel {
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px;
+      background: var(--panel); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow); transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .mode-panel.active { background: rgba(124, 92, 255, 0.12); border-color: var(--accent); }
+    .mode-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .mode-title .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--text-dim); margin-right: 6px; vertical-align: middle; transition: background 0.2s, box-shadow 0.2s; }
+    .mode-panel.active .mode-title .dot { background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); }
+    .mode-panel label:first-of-type { margin-top: 0; }
+    details.settings {
+      margin-top: 22px; border: 1px solid var(--border); border-radius: var(--radius); padding: 0 16px 16px;
+      background: var(--panel); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--shadow);
+    }
+    details.settings summary { cursor: pointer; font-weight: 700; padding: 14px 0; font-size: 0.95rem; color: var(--text); }
+    label.chk { display: flex; align-items: center; gap: 8px; font-weight: 500; margin-top: 14px; cursor: pointer; color: var(--text); }
+    label.chk input { width: auto; margin: 0; accent-color: var(--accent); }
+    .hint { color: var(--text-dim); font-size: 0.8rem; margin-top: 4px; line-height: 1.4; }
+    .dropzone {
+      margin-top: 12px; padding: 18px; border: 2px dashed var(--border-strong); border-radius: 12px;
+      text-align: center; color: var(--text-dim); background: rgba(0, 0, 0, 0.2); cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .dropzone.dragover { border-color: var(--accent); background: rgba(124, 92, 255, 0.15); color: var(--text); }
+    #imgPreview, #videoPreview, #screenPreview {
+      display: block; max-width: 100%; max-height: 140px; width: auto; height: auto;
+      margin: 10px auto 0; border-radius: 10px; object-fit: contain;
+    }
+    #screenPreview[hidden], #imgPreview[hidden], #videoPreview[hidden] { display: none; }
+    /* hidden video → black frame when captured to canvas (Chrome). Render tiny off-screen */
+    #screenVideo {
+      position: fixed; left: 0; top: 0; width: 2px; height: 2px;
+      opacity: 0.01; pointer-events: none; z-index: -1;
+    }
+    #dropHint, #videoDropHint, #screenHint { font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="brand">
+    <div class="brand-mark"><span>&#9835;</span></div>
+    <div>
+      <h1>MRT2 WebUI</h1>
+      <span class="tag">Realtime Music Generation</span>
+    </div>
+  </div>
+
+  <div>
+    <label>Model</label>
+    <div class="radio-row">
+      <label class="radio"><input type="radio" name="model" value="mrt2_small" checked /> mrt2_small (230M)</label>
+      <label class="radio"><input type="radio" name="model" value="mrt2_base" /> mrt2_base (2.4B)</label>
+      <button class="primary" id="loadModelBtn" type="button">Load model</button>
+    </div>
+    <div id="modelStatus">Model not loaded — select one to load</div>
+  </div>
+
+  <div class="modes">
+    <div class="mode-panel" id="panelText" data-mode="text">
+      <div class="mode-title"><span class="dot"></span>Text</div>
+      <textarea id="prompt">disco funk</textarea>
+      <div class="row">
+        <button class="primary" id="applyBtn">Apply prompt</button>
+      </div>
+    </div>
+
+    <div class="mode-panel" id="panelScreen" data-mode="screen">
+      <div class="mode-title"><span class="dot"></span>Screen</div>
+      <div class="dropzone" id="screenZone">
+        <div id="screenHint">Capture the display every chunk to apply style</div>
+        <img id="screenPreview" alt="" hidden />
+      </div>
+      <div class="row">
+        <button class="primary" id="screenBtn" type="button">Screen mode</button>
+        <button class="secondary" id="stopScreenBtn" type="button">Stop</button>
+      </div>
+    </div>
+
+    <div class="mode-panel" id="panelImage" data-mode="image">
+      <div class="mode-title"><span class="dot"></span>Image</div>
+      <div class="dropzone" id="dropZone">
+        <div id="dropHint">Drop an image or click</div>
+        <img id="imgPreview" alt="" hidden />
+      </div>
+      <input id="fileInput" type="file" accept="image/*" hidden />
+    </div>
+
+    <div class="mode-panel" id="panelVideo" data-mode="video">
+      <div class="mode-title"><span class="dot"></span>Video</div>
+      <div class="dropzone" id="videoDropZone">
+        <div id="videoDropHint">Drop a video to play it and apply every chunk</div>
+        <video id="videoPreview" controls loop muted playsinline hidden></video>
+      </div>
+      <input id="videoFileInput" type="file" accept="video/*" hidden />
+      <div class="row">
+        <button class="secondary" id="stopVideoBtn" type="button">Stop video</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <button id="playBtn">Play</button>
+    <button id="stopBtn">Stop</button>
+  </div>
+
+  <label>Status</label>
+  <div id="status">Connecting to WebSocket...</div>
+
+  <details class="settings">
+    <summary>Settings (temperature / top-k / CFG)</summary>
+
+    <label>Frames / chunk <span class="val" id="framesVal">25</span></label>
+    <input id="frames" type="range" min="1" max="100" step="1" value="25" />
+
+    <label>Temperature <span class="val" id="tempVal">1.3</span></label>
+    <input id="temperature" type="range" min="0.1" max="2.5" step="0.1" value="1.3" />
+
+    <label>Top-k <span class="val" id="topkVal">40</span></label>
+    <input id="topk" type="range" min="1" max="200" step="1" value="40" />
+
+    <label>CFG MusicCoCa <span class="val" id="cfgmVal">3.0</span></label>
+    <input id="cfgMusiccoca" type="range" min="-1" max="7" step="0.1" value="3.0" />
+
+    <label>CFG notes <span class="val" id="cfgnVal">1.0</span></label>
+    <input id="cfgNotes" type="range" min="-1" max="7" step="0.1" value="1.0" />
+
+    <label class="chk">
+      <input id="preallocate" type="checkbox" checked />
+      GPU preallocate
+    </label>
+    <div class="hint" id="preallocHint"></div>
+  </details>
+
+  <video id="screenVideo" autoplay muted playsinline></video>
+
+<script>
+const SAMPLE_RATE = 48000;
+let ws = null;
+let ctx = null;
+let nextTime = 0;
+let playStart = 0;
+let generatedSec = 0;
+let streaming = false;
+
+const $ = (id) => document.getElementById(id);
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
+
+function setStatus(text) {
+  let html = escapeHtml(text);
+  // Highlight realtime SLOW + the leading "> ... ms" line in red
+  html = html.replace(/realtime SLOW/g, '<span class="slow">realtime SLOW</span>');
+  $("status").innerHTML = html;
+}
+
+function selectedModel() {
+  const el = document.querySelector('input[name="model"]:checked');
+  return el ? el.value : "mrt2_small";
+}
+
+function setMode(mode) {
+  document.querySelectorAll(".mode-panel").forEach((p) => {
+    p.classList.toggle("active", p.dataset.mode === mode);
+  });
+}
+
+function setModelStatus(msg) {
+  const loaded = msg.loaded ? "loaded" : "not loaded";
+  $("modelStatus").textContent = `Current: ${msg.model} (${loaded})`;
+  if (msg.model) {
+    const el = document.querySelector(`input[name="model"][value="${msg.model}"]`);
+    if (el) el.checked = true;
+  }
+  if (typeof msg.preallocate === "boolean") {
+    $("preallocate").checked = msg.preallocate;
+  }
+  if (typeof msg.gpu_initialized === "boolean") {
+    const cb = $("preallocate");
+    cb.disabled = msg.gpu_initialized;
+    $("preallocHint").textContent = msg.gpu_initialized
+      ? "GPU already initialized, cannot change. Restart the server and set it before loading a model."
+      : "";
+  }
+}
+
+function resetPlayer() {
+  nextTime = 0; playStart = 0; generatedSec = 0;
+  if (ctx) { ctx.close().catch(() => {}); ctx = null; }
+}
+
+function ensureCtx() {
+  if (!ctx) {
+    ctx = new AudioContext({ sampleRate: SAMPLE_RATE });
+    playStart = ctx.currentTime;
+    nextTime = playStart + 0.08;
+    ctx.resume().catch(() => {});
+  }
+}
+
+function playPcm(msg) {
+  ensureCtx();
+  if (typeof msg.total_sec === "number") generatedSec = msg.total_sec;
+  const raw = atob(msg.pcm_b64 || "");
+  if (!raw) return;
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  const int16 = new Int16Array(bytes.buffer);
+  const frames = int16.length / 2;
+  if (!frames) return;
+  const buf = ctx.createBuffer(2, frames, msg.sr || SAMPLE_RATE);
+  const L = buf.getChannelData(0);
+  const R = buf.getChannelData(1);
+  for (let i = 0; i < frames; i++) {
+    L[i] = int16[i * 2] / 32768.0;
+    R[i] = int16[i * 2 + 1] / 32768.0;
+  }
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  src.connect(ctx.destination);
+  const now = ctx.currentTime;
+  if (nextTime < now) nextTime = now + 0.08;
+  src.start(nextTime);
+  nextTime += buf.duration;
+}
+
+function samplingParams() {
+  return {
+    temperature: parseFloat($("temperature").value),
+    top_k: parseInt($("topk").value, 10),
+    cfg_musiccoca: parseFloat($("cfgMusiccoca").value),
+    cfg_notes: parseFloat($("cfgNotes").value),
+  };
+}
+
+function send(cmd, extra = {}) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    setStatus("WebSocket not connected. Refresh the page.");
+    return;
+  }
+  ws.send(JSON.stringify({ cmd, ...extra }));
+}
+
+function connect() {
+  const proto = location.protocol === "https:" ? "wss" : "ws";
+  ws = new WebSocket(`${proto}://${location.host}/ws`);
+  ws.onclose = () => { streaming = false; setStatus("Disconnected. Refresh to reconnect."); };
+  ws.onerror = () => setStatus("WebSocket error.");
+  ws.onopen = () => { setStatus("Connected. Pick a model or press Play."); send("get_model"); };
+  ws.onmessage = (ev) => {
+    const msg = JSON.parse(ev.data);
+    if (msg.type === "reset") { resetPlayer(); return; }
+    if (msg.type === "audio") { playPcm(msg); captureForChunk(); return; }
+    if (msg.type === "status") { setStatus(msg.text); return; }
+    if (msg.type === "model_status") { setModelStatus(msg); return; }
+    if (msg.type === "stream_end") { streaming = false; return; }
+  };
+}
+
+["temperature","topk","cfgMusiccoca","cfgNotes"].forEach((id) => {
+  const el = $(id);
+  const valId = id === "temperature" ? "tempVal" : id === "topk" ? "topkVal"
+    : id === "cfgMusiccoca" ? "cfgmVal" : "cfgnVal";
+  const sync = () => { $(valId).textContent = el.value; send("update_sampling", samplingParams()); };
+  el.addEventListener("input", sync);
+});
+
+function framesValue() {
+  let n = parseInt($("frames").value, 10);
+  if (!Number.isFinite(n) || n < 1) n = 25;
+  return n;
+}
+
+$("loadModelBtn").onclick = () => {
+  const model = selectedModel();
+  $("modelStatus").textContent = `Loading: ${model} ...`;
+  send("set_model", { model });
+};
+
+$("frames").addEventListener("input", () => {
+  $("framesVal").textContent = framesValue();
+});
+$("frames").addEventListener("change", () => {
+  const n = framesValue();
+  $("framesVal").textContent = n;
+  send("set_frames", { frames: n });
+});
+
+$("preallocate").addEventListener("change", () => {
+  send("set_preallocate", { enabled: $("preallocate").checked });
+});
+
+$("playBtn").onclick = () => {
+  resetPlayer();
+  streaming = true;
+  setMode("text");
+  send("play", { prompt: $("prompt").value, frames: framesValue(), ...samplingParams() });
+};
+$("stopBtn").onclick = () => { send("stop"); streaming = false; };
+$("applyBtn").onclick = () => {
+  setMode("text");
+  send("apply_prompt", { prompt: $("prompt").value });
+};
+
+const dropZone = $("dropZone");
+const fileInput = $("fileInput");
+const imgPreview = $("imgPreview");
+const videoDropZone = $("videoDropZone");
+const videoFileInput = $("videoFileInput");
+const videoPreview = $("videoPreview");
+const CAPTURE_MAX_PX = 512;  // Downscale for CLIP + reduce transfer size
+
+// video/screen capture is applied once per chunk (when an audio message arrives).
+let activeCaptureMode = null;  // null | "video" | "screen"
+let videoFilename = "video";
+let videoObjectUrl = null;
+
+const screenVideo = $("screenVideo");
+const screenPreview = $("screenPreview");
+let screenStream = null;
+
+function captureForChunk() {
+  if (activeCaptureMode === "video") applyVideoFrame(videoFilename);
+  else if (activeCaptureMode === "screen") applyScreenFrame();
+}
+
+function stopScreenStyle() {
+  if (activeCaptureMode === "screen") activeCaptureMode = null;
+  if (screenStream) {
+    screenStream.getTracks().forEach((t) => t.stop());
+    screenStream = null;
+  }
+  screenVideo.srcObject = null;
+  screenPreview.hidden = true;
+  $("screenBtn").disabled = false;
+}
+
+function captureElementFrameB64(el, maxPx = CAPTURE_MAX_PX) {
+  const srcW = el.videoWidth || el.naturalWidth || el.width;
+  const srcH = el.videoHeight || el.naturalHeight || el.height;
+  if (!srcW || !srcH) return null;
+  const scale = Math.min(1, maxPx / Math.max(srcW, srcH));
+  const w = Math.max(1, Math.round(srcW * scale));
+  const h = Math.max(1, Math.round(srcH * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const c = canvas.getContext("2d");
+  c.drawImage(el, 0, 0, w, h);
+  const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+  const comma = dataUrl.indexOf(",");
+  return comma >= 0 ? dataUrl.slice(comma + 1) : null;
+}
+
+function applyScreenFrame() {
+  const b64 = captureElementFrameB64(screenVideo);
+  if (!b64) return;
+  const ts = new Date().toLocaleTimeString();
+  screenPreview.src = "data:image/jpeg;base64," + b64;
+  screenPreview.hidden = false;
+  send("apply_image", {
+    image_b64: b64,
+    filename: `screen @ ${ts}`,
+    recurring: true,
+  });
+}
+
+async function startScreenStyle() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+    setStatus("This browser does not support screen sharing (getDisplayMedia).");
+    return;
+  }
+  stopVideoStyle();
+  stopScreenStyle();
+  imgPreview.hidden = true;
+  $("dropHint").textContent = "Drop an image here or click";
+
+  try {
+    screenStream = await navigator.mediaDevices.getDisplayMedia({
+      video: { frameRate: 5 },
+      audio: false,
+    });
+  } catch (e) {
+    setStatus("Screen sharing was canceled or denied.");
+    return;
+  }
+
+  screenVideo.srcObject = screenStream;
+  $("screenBtn").disabled = true;
+  setMode("screen");
+  $("screenHint").textContent = "Capturing screen · applying style every chunk";
+
+  screenStream.getVideoTracks()[0].addEventListener("ended", () => {
+    stopScreenStyle();
+    $("screenHint").textContent = "Capture the display every chunk to apply style";
+    setStatus("Screen share ended.");
+  });
+
+  try {
+    await screenVideo.play();
+  } catch (_) {}
+
+  await new Promise((resolve) => {
+    if (screenVideo.videoWidth > 0) resolve();
+    else screenVideo.addEventListener("loadedmetadata", resolve, { once: true });
+  });
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+  activeCaptureMode = "screen";
+  applyScreenFrame();
+}
+
+function stopVideoStyle() {
+  if (activeCaptureMode === "video") activeCaptureMode = null;
+  videoPreview.pause();
+  videoPreview.removeAttribute("src");
+  videoPreview.load();
+  videoPreview.hidden = true;
+  if (videoObjectUrl) {
+    URL.revokeObjectURL(videoObjectUrl);
+    videoObjectUrl = null;
+  }
+}
+
+function applyVideoFrame(filename) {
+  const b64 = captureElementFrameB64(videoPreview);
+  if (!b64) return;
+  const sec = videoPreview.currentTime || 0;
+  send("apply_image", {
+    image_b64: b64,
+    filename: `${filename} @ ${sec.toFixed(0)}s`,
+    recurring: true,
+  });
+}
+
+function startVideoStyle(file) {
+  if (!file || !file.type.startsWith("video/")) {
+    setStatus("Only video files are supported.");
+    return;
+  }
+  stopScreenStyle();
+  stopVideoStyle();
+  imgPreview.hidden = true;
+  $("dropHint").textContent = "Drop an image here or click";
+
+  videoObjectUrl = URL.createObjectURL(file);
+  videoPreview.src = videoObjectUrl;
+  videoPreview.hidden = false;
+  videoFilename = file.name;
+  setMode("video");
+  $("videoDropHint").textContent = `${file.name} · applying style every chunk`;
+
+  const beginCapture = () => {
+    videoPreview.play().catch(() => {});
+    activeCaptureMode = "video";
+    applyVideoFrame(file.name);
+  };
+
+  if (videoPreview.readyState >= 2) beginCapture();
+  else videoPreview.addEventListener("loadeddata", beginCapture, { once: true });
+}
+
+function applyImageFile(file) {
+  if (!file || !file.type.startsWith("image/")) {
+    setStatus("Only image files are supported.");
+    return;
+  }
+  stopScreenStyle();
+  stopVideoStyle();
+  $("videoDropHint").textContent = "Drop a video to play it and apply every chunk";
+  const reader = new FileReader();
+  reader.onload = () => {
+    const dataUrl = reader.result;
+    const comma = dataUrl.indexOf(",");
+    const b64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+    imgPreview.src = dataUrl;
+    imgPreview.hidden = false;
+    $("dropHint").textContent = file.name;
+    setMode("image");
+    setStatus(`Applying image style: ${file.name} ...`);
+    send("apply_image", { image_b64: b64, filename: file.name });
+  };
+  reader.readAsDataURL(file);
+}
+
+dropZone.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => {
+  if (fileInput.files && fileInput.files[0]) applyImageFile(fileInput.files[0]);
+});
+dropZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropZone.classList.add("dragover");
+});
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+dropZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropZone.classList.remove("dragover");
+  const file = e.dataTransfer.files && e.dataTransfer.files[0];
+  if (file) applyImageFile(file);
+});
+
+videoDropZone.addEventListener("click", () => videoFileInput.click());
+videoFileInput.addEventListener("change", () => {
+  if (videoFileInput.files && videoFileInput.files[0]) startVideoStyle(videoFileInput.files[0]);
+});
+videoDropZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  videoDropZone.classList.add("dragover");
+});
+videoDropZone.addEventListener("dragleave", () => videoDropZone.classList.remove("dragover"));
+videoDropZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  videoDropZone.classList.remove("dragover");
+  const file = e.dataTransfer.files && e.dataTransfer.files[0];
+  if (file) startVideoStyle(file);
+});
+$("stopVideoBtn").onclick = () => {
+  stopVideoStyle();
+  $("videoDropHint").textContent = "Drop a video to play it and apply every chunk";
+  setStatus("Video style stopped.");
+};
+$("screenBtn").onclick = () => startScreenStyle();
+$("stopScreenBtn").onclick = () => {
+  stopScreenStyle();
+  $("screenHint").textContent = "Capture the display every chunk to apply style";
+  setStatus("Screen mode stopped.");
+};
+
+connect();
+</script>
+</body>
+</html>
