@@ -1,5 +1,6 @@
 fastapi>=0.110
 uvicorn>=0.29
+websockets>=12
 torch>=2.6
 transformers>=4.40
 pillow>=10.0
