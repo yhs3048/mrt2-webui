@@ -23,18 +23,6 @@ steer the style with **text**, **images**, **video**, or **🖥️ your screen**
 - 🖼️ **Drop in images or video** to set the mood visually
 - 🖥️ **Share your screen** and let the music react to what's on it
 
-No command line required once it's running.
-
----
-
-## Requirements
-
-| Component | Version |
-|-----------|---------|
-| JAX | 0.10.1 |
-| CUDA | 12.8 |
-| cuDNN | 9.10.2 |
-
 ---
 
 ## Installation
