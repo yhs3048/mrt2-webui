@@ -1,17 +1,9 @@
-<div align="center">
+# mrt2-webui
 
-```
-███╗   ███╗██████╗ ████████╗██████╗     ██╗    ██╗███████╗██████╗ ██╗   ██╗██╗
-████╗ ████║██╔══██╗╚══██╔══╝╚════██╗    ██║    ██║██╔════╝██╔══██╗██║   ██║██║
-██╔████╔██║██████╔╝   ██║    █████╔╝    ██║ █╗ ██║█████╗  ██████╔╝██║   ██║██║
-██║╚██╔╝██║██╔══██╗   ██║   ██╔═══╝     ██║███╗██║██╔══╝  ██╔══██╗██║   ██║██║
-██║ ╚═╝ ██║██║  ██║   ██║   ███████╗    ╚███╔███╔╝███████╗██████╔╝╚██████╔╝██║
-╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝     ╚══╝╚══╝ ╚══════╝╚═════╝  ╚═════╝ ╚═╝
-```
+### Realtime Web UI for Magenta RT2
 
-**Realtime Web UI for Magenta RT2**
-
-Stream AI-generated music over WebSocket — steer the style with text, images, video, or your screen.
+Stream AI-generated music over WebSocket —  
+steer the style with **text**, **images**, **video**, or **🖥️ your screen**.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![JAX](https://img.shields.io/badge/JAX-0.10.1-A259FF?style=flat-square)](https://jax.readthedocs.io)
