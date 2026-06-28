@@ -67,5 +67,6 @@ anywhere/
 ## Acknowledgements
 
 Built on top of [Magenta RT2](https://github.com/magenta/magenta-realtime) by the Google Magenta team.
+Developed by [yhs3048](https://github.com/yhs3048) at Music and Audio Research Group (MARG), Seoul National University.
 
 ---
