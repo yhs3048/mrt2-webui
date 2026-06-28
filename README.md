@@ -36,7 +36,7 @@ pip install -e ".[mlx]"
 ```
 
 ```bash
-export MAGENTA_HOME=/mnt/Magenta
+export MAGENTA_HOME=/your_folder
 mrt models init
 mrt models download
 mrt checkpoints download
@@ -49,27 +49,6 @@ git clone https://github.com/yhs3048/mrt2-webui.git
 cd mrt2-webui
 pip install -r requirements.txt
 ```
-
----
-
-## Usage
-
-> _(Add your launch command here, e.g. `python app.py` or `uvicorn main:app --reload`)_
-
-Open your browser and navigate to `http://localhost:PORT` — the UI will handle the rest.
-
----
-
-## How it works
-
-```
-Browser  ──WebSocket──▶  mrt2-webui server  ──▶  Magenta RT2 (JAX/GPU)
-   ▲                           │
-   │   text / image / screen   │  audio stream
-   └───────────────────────────┘
-```
-
-Style inputs (text, image, video, screen capture) are forwarded to the RT2 model in realtime. Generated audio is streamed back to the browser as it's produced.
 
 ---
 
