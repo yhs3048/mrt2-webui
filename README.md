@@ -50,6 +50,18 @@ cd mrt2-webui
 pip install -r requirements.txt
 ```
 
+### 3. Folder structure
+
+Both repositories must sit side by side in the same parent directory.
+
+```
+anywhere/
+├── magenta-realtime/     # Magenta RT2 core
+└── mrt2-webui/           # This repo
+```
+
+> `MAGENTA_HOME` is where model weights are stored and can be set to any path independently.
+
 ---
 
 ## Acknowledgements
@@ -57,7 +69,3 @@ pip install -r requirements.txt
 Built on top of [Magenta RT2](https://github.com/magenta/magenta-realtime) by the Google Magenta team.
 
 ---
-
-<div align="center">
-  <sub>Made with 🎛️ by <a href="https://github.com/yhs3048">yhs3048</a></sub>
-</div>
