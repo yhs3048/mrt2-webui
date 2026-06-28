@@ -36,7 +36,7 @@ pip install -e ".[mlx]"
 ```
 
 ```bash
-export MAGENTA_HOME=/your_folder
+export MAGENTA_HOME=/any_folder
 mrt models init
 mrt models download
 mrt checkpoints download
