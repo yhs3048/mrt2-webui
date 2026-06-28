@@ -20,10 +20,10 @@ from pathlib import Path
 import torch
 import uvicorn
 
-from mrt2_webui.clip_encoder import CLIPStyleEncoder
-from mrt2_webui.config import CLIP_MODEL_NAME, DEFAULT_PROJECTION
-from mrt2_webui.engine import MRT2StreamEngine
-from mrt2_webui.server import create_app
+from src.clip_encoder import CLIPStyleEncoder
+from src.config import CLIP_MODEL_NAME, DEFAULT_PROJECTION
+from src.engine import MRT2StreamEngine
+from src.server import create_app
 
 
 def parse_args() -> argparse.Namespace:
