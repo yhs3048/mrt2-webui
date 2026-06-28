@@ -233,6 +233,9 @@
     <button id="stopBtn">Stop</button>
   </div>
 
+  <label>Volume <span class="val" id="volumeVal">100%</span></label>
+  <input id="volume" type="range" min="0" max="150" step="1" value="100" />
+
   <label>Status</label>
   <div id="status">Connecting to WebSocket...</div>
 
@@ -271,6 +274,8 @@ let nextTime = 0;
 let playStart = 0;
 let generatedSec = 0;
 let streaming = false;
+let gainNode = null;
+let volume = 1.0;
 
 const $ = (id) => document.getElementById(id);
 
@@ -320,6 +325,7 @@ function setModelStatus(msg) {
 function resetPlayer() {
   nextTime = 0; playStart = 0; generatedSec = 0;
   if (ctx) { ctx.close().catch(() => {}); ctx = null; }
+  gainNode = null;
 }
 
 function ensureCtx() {
@@ -327,6 +333,9 @@ function ensureCtx() {
     ctx = new AudioContext({ sampleRate: SAMPLE_RATE });
     playStart = ctx.currentTime;
     nextTime = playStart + 0.08;
+    gainNode = ctx.createGain();
+    gainNode.gain.value = volume;
+    gainNode.connect(ctx.destination);
     ctx.resume().catch(() => {});
   }
 }
@@ -350,7 +359,7 @@ function playPcm(msg) {
   }
   const src = ctx.createBufferSource();
   src.buffer = buf;
-  src.connect(ctx.destination);
+  src.connect(gainNode || ctx.destination);
   const now = ctx.currentTime;
   if (nextTime < now) nextTime = now + 0.08;
   src.start(nextTime);
@@ -421,6 +430,12 @@ $("frames").addEventListener("change", () => {
 
 $("preallocate").addEventListener("change", () => {
   send("set_preallocate", { enabled: $("preallocate").checked });
+});
+
+$("volume").addEventListener("input", () => {
+  volume = parseInt($("volume").value, 10) / 100;
+  $("volumeVal").textContent = $("volume").value + "%";
+  if (gainNode) gainNode.gain.value = volume;
 });
 
 $("playBtn").onclick = () => {
