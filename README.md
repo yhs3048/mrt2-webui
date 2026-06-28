@@ -2,6 +2,9 @@
 
 ### Realtime Web UI for Magenta RT2
 
+<img width="690" height="500" alt="image" src="https://github.com/user-attachments/assets/ff9d8908-316f-4627-8eb2-96752f432dff" />
+
+
 Stream AI-generated music over WebSocket —  
 steer the style with **text**, **images**, **video**, or **🖥️ your screen**.
 
@@ -63,10 +66,28 @@ anywhere/
 > `MAGENTA_HOME` is where model weights are stored and can be set to any path independently.
 
 ---
+ 
+## Usage
+ 
+```bash
+python webui.py
+```
+ 
+Then open your browser and navigate to `http://localhost:8000`.
+ 
+### Options
+ 
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--port` | `8000` | Port to serve the web UI on |
+| `--clip-device` | `cuda` | Device for the CLIP encoder — `cpu`, `cuda`, or a specific GPU like `cuda:1` |
+ 
+---
 
 ## Acknowledgements
 
 Built on top of [Magenta RT2](https://github.com/magenta/magenta-realtime) by the Google Magenta team.
+
 Developed by [yhs3048](https://github.com/yhs3048) at Music and Audio Research Group (MARG), Seoul National University.
 
 ---
