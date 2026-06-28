@@ -1,19 +1,6 @@
-# mrt2-webui dependencies
-#
-# Assumes magenta-realtime (the `magenta_rt` package) is already installed,
-# which also provides jax / jaxlib / numpy. Those are intentionally NOT pinned
-# here to avoid clashing with the versions magenta-realtime requires.
-#
-# Install:  pip install -r requirements.txt
-
-# Web server / WebSocket (starlette ships with fastapi)
 fastapi>=0.110
 uvicorn>=0.29
-
-# CLIP style encoder
-torch>=2.1
+torch>=2.6
 transformers>=4.40
-
-# Image / audio I/O
 pillow>=10.0
 soundfile>=0.12
