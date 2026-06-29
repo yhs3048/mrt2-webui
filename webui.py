@@ -51,7 +51,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--preallocate",
         action=argparse.BooleanOptionalAction,
-        default=True,
+        default=False,
         help="Preallocate JAX GPU memory (XLA_PYTHON_CLIENT_PREALLOCATE).",
     )
     return parser.parse_args()
