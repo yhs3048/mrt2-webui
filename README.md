@@ -8,6 +8,7 @@
 Stream AI-generated music over WebSocket —  
 steer the style with **text**, **images**, **video**, or **🖥️ your screen**.
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/yhs3048/mrt2-webui/blob/main/examples/colab_demo.ipynb)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![JAX](https://img.shields.io/badge/JAX-0.10.1-A259FF?style=flat-square)](https://jax.readthedocs.io)
 [![CUDA](https://img.shields.io/badge/CUDA-12.8-76B900?style=flat-square&logo=nvidia&logoColor=white)](https://developer.nvidia.com/cuda-toolkit)
@@ -25,6 +26,18 @@ steer the style with **text**, **images**, **video**, or **🖥️ your screen**
 - 💬 **Guide the style** using natural language prompts
 - 🖼️ **Drop in images or video** to set the mood visually
 - 🖥️ **Share your screen** and let the music react to what's on it
+
+---
+
+## Try it on Colab
+
+Want to try it without installing anything? Run the demo on a free Colab GPU:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/yhs3048/mrt2-webui/blob/main/examples/colab_demo.ipynb)
+
+The notebook installs everything, downloads `mrt2_small`, and exposes the web UI through a public URL. See [`examples/colab_demo.ipynb`](examples/colab_demo.ipynb).
+
+> **Note:** Colab is best treated as a quick demo. Audio is streamed to your browser through a public tunnel, which adds latency and jitter, so realtime playback may stutter. For true realtime, run locally on your own GPU (see below).
 
 ---
 
