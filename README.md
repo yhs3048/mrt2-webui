@@ -35,7 +35,12 @@ steer the style with **text**, **images**, **video**, or **🖥️ your screen**
 ```bash
 git clone --recurse-submodules https://github.com/magenta/magenta-realtime.git
 cd magenta-realtime
+
+# macOS (Apple Silicon)
 pip install -e ".[mlx]"
+
+# Linux (NVIDIA GPU) — add the CUDA 12 JAX wheel
+pip install -e "." "jax[cuda12]"
 ```
 
 ```bash
