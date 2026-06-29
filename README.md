@@ -81,6 +81,8 @@ Then open your browser and navigate to `http://localhost:8000`.
 |----------|---------|-------------|
 | `--port` | `8000` | Port to serve the web UI on |
 | `--clip-device` | `cuda` | Device for the CLIP encoder — `cpu`, `cuda`, or a specific GPU like `cuda:1` |
+
+> **Note:** Ensure port `8000` (or your chosen `--port`) is open and accessible.
  
 ---
 
